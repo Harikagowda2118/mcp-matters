@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Matters — AI agents for everyday life</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="w">
+  <header>
+    <span class="tag">Model Context Protocol</span>
+    <h1>Make <em>MCP</em> matter:<br>AI agents for everyday life</h1>
+    <p class="lead">MCP is a simple open standard that lets an AI assistant safely use your calendar, email, maps, notes and bank — so it can do things for you instead of only talking about them.</p>
+  </header>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="grid">
+      <div class="card"><h3>1 · Ask</h3><p>You tell the assistant what you want in plain language.</p></div>
+      <div class="card"><h3>2 · Connect</h3><p>It finds the right MCP servers — small connectors for each app or service.</p></div>
+      <div class="card"><h3>3 · Act</h3><p>It calls their tools step by step, and shows you what it did.</p></div>
+      <div class="card"><h3>4 · Stay in control</h3><p>You approve sensitive actions. Every call is visible.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Try the agent</h2>
+    <div class="demo">
+      <div class="chips" id="chips"></div>
+      <div class="row">
+        <input id="q" placeholder="Ask for something everyday…" aria-label="Ask the agent">
+        <button class="go" id="go">Run</button>
+      </div>
+      <div id="out" aria-live="polite"></div>
+      <p class="small">Prototype: tool calls are simulated in your browser. Nothing is sent anywhere.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What a tool looks like</h2>
+    <p class="muted">An MCP server just describes its tools. Any compatible assistant can use them.</p>
+<pre>{
+  "name": "calendar.find_free_slot",
+  "description": "Find a free time on the user's calendar",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "duration_min": { "type": "number" },
+      "day": { "type": "string" }
+    }
+  }
+}</pre>
+  </section>
+
+  <footer>Make MCP Matter · a prototype for everyday AI agents</footer>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
