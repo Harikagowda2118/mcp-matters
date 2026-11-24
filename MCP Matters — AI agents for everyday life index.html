@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MCP Matters — AI agents for everyday life</title>
+<style>
+:root{--bg:#faf8f4;--fg:#1c1b1a;--mut:#6b6860;--card:#fff;--bd:#e6e1d8;--ac:#d9531e;--ac2:#fbe9e0;--code:#f1ede5;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161513;--fg:#f1ede5;--mut:#a39e92;--card:#201e1b;--bd:#35322c;--ac:#ff8a5c;--ac2:#33211a;--code:#262420;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161513;--fg:#f1ede5;--mut:#a39e92;--card:#201e1b;--bd:#35322c;--ac:#ff8a5c;--ac2:#33211a;--code:#262420;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Georgia,'Times New Roman',serif}
+.w{max-width:860px;margin:0 auto;padding:0 20px}
+h1,h2,h3,button,input,.mono{font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+header{padding:64px 0 32px}
+.tag{display:inline-block;font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);background:var(--ac2);padding:4px 10px;border-radius:99px}
+h1{font-size:clamp(34px,7vw,56px);line-height:1.08;margin:16px 0;letter-spacing:-.02em}
+h1 em{color:var(--ac);font-style:normal}
+.lead{font-size:19px;color:var(--mut);max-width:620px}
+h2{font-size:26px;margin:56px 0 16px;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--mut);font-size:15px}
+.demo{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1px solid var(--bd);background:var(--bg);color:var(--fg);padding:8px 12px;border-radius:99px;font-size:14px;cursor:pointer}
+.chip:hover{border-color:var(--ac)}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;padding:12px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);font-size:15px}
+.go{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:0 18px;font-weight:600;cursor:pointer;font-size:15px}
+.go:disabled{opacity:.5}
+#out{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 14px;border-radius:12px;font-size:15px;max-width:92%}
+.u{align-self:flex-end;background:var(--ac2)}
+.a{background:var(--bg);border:1px solid var(--bd)}
+.call{border:1px solid var(--bd);border-left:3px solid var(--ac);background:var(--code);border-radius:10px;padding:10px 12px;font:13px/1.5 ui-monospace,Menlo,monospace;overflow-x:auto;animation:in .3s}
+.call b{color:var(--ac)}.call .r{color:var(--mut);display:block;margin-top:2px}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.small{font:13px system-ui,sans-serif;color:var(--mut);margin-top:10px}
+pre{background:var(--code);border:1px solid var(--bd);border-radius:12px;padding:14px;overflow-x:auto;font-size:13px;line-height:1.5}
+footer{padding:48px 0 64px;color:var(--mut);font:14px system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="w">
+<header>
+  <span class="tag">Model Context Protocol</span>
+  <h1>Make <em>MCP</em> matter:<br>AI agents for everyday life</h1>
+  <p class="lead">MCP is a simple open standard that lets an AI assistant safely use your calendar, email, maps, notes and bank — so it can do things for you instead of only talking about them.</p>
+</header>
+
+<section>
+  <h2>How it works</h2>
+  <div class="grid">
+    <div class="card"><h3>1 · Ask</h3><p>You tell the assistant what you want in plain language.</p></div>
+    <div class="card"><h3>2 · Connect</h3><p>It finds the right MCP servers — small connectors for each app or service.</p></div>
+    <div class="card"><h3>3 · Act</h3><p>It calls their tools step by step, and shows you what it did.</p></div>
+    <div class="card"><h3>4 · Stay in control</h3><p>You approve sensitive actions. Every call is visible.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Try the agent</h2>
+  <div class="demo">
+    <div class="chips" id="chips"></div>
+    <div class="row">
+      <input id="q" placeholder="Ask for something everyday…" aria-label="Ask the agent">
+      <button class="go" id="go">Run</button>
+    </div>
+    <div id="out" aria-live="polite"></div>
+    <p class="small">Prototype: tool calls are simulated in your browser. Nothing is sent anywhere.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What a tool looks like</h2>
+  <p style="color:var(--mut)">An MCP server just describes its tools. Any compatible assistant can use them.</p>
+<pre>{
+  "name": "calendar.find_free_slot",
+  "description": "Find a free time on the user's calendar",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "duration_min": { "type": "number" },
+      "day": { "type": "string" }
+    }
+  }
+}</pre>
+</section>
+
+<footer>Make MCP Matter · a prototype for everyday AI agents</footer>
+</div>
+
+<script>
+const S={
+ day:{label:"Plan my study day",steps:[
+  ["calendar","list_events",{day:"today"},"3 events: Lecture 10:00, Lab 14:00, Gym 18:00"],
+  ["tasks","list_due",{within:"3d"},"Report draft (Thu), DBMS quiz (Fri)"],
+  ["calendar","create_event",{title:"Report draft",time:"15:30–17:00"},"Created ✓"]],
+  ans:"Your day is set: lecture at 10, lab at 14:00, then a focused 15:30–17:00 block for your report draft. DBMS quiz prep is queued for tomorrow."},
+ dinner:{label:"Book dinner for Friday",steps:[
+  ["maps","search_places",{query:"Italian, 4 stars+",near:"home"},"Trattoria Roma (0.8 km), Luca's (1.5 km)"],
+  ["calendar","find_free_slot",{day:"Friday",duration_min:90},"Free at 19:30"],
+  ["booking","reserve_table",{place:"Trattoria Roma",party:2,time:"19:30"},"Awaiting your approval…"]],
+  ans:"I found Trattoria Roma and a free 19:30 slot on Friday. Table for 2 is ready to book — confirm and I'll finish it."},
+ money:{label:"Where did my money go?",steps:[
+  ["bank","get_transactions",{range:"30d"},"84 transactions"],
+  ["analysis","categorize",{rows:84},"Food 38%, Transport 22%, Subscriptions 15%"],
+  ["notes","save_note",{title:"Monthly spending"},"Saved ✓"]],
+  ans:"Food is your biggest category at 38%, and subscriptions are 15%. I saved a summary to your notes so you can compare next month."},
+ email:{label:"Reply to my professor",steps:[
+  ["email","search",{from:"professor",unread:true},"1 message: “Can you share the report draft?”"],
+  ["docs","get_latest",{name:"Report"},"report_v3.docx"],
+  ["email","create_draft",{to:"professor",attach:"report_v3.docx"},"Draft saved — not sent"]],
+  ans:"I drafted a polite reply with report_v3 attached. It's in your drafts — I won't send anything until you say so."}
+};
+const $=id=>document.getElementById(id),out=$("out"),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let busy=false;
+Object.entries(S).forEach(([k,v])=>{const b=document.createElement("button");b.className="chip";b.textContent=v.label;b.onclick=()=>{$("q").value=v.label;run(k)};$("chips").appendChild(b)});
+function pick(t){t=t.toLowerCase();
+ if(/dinner|book|restaurant|table/.test(t))return"dinner";
+ if(/money|spend|expense|budget|bank/.test(t))return"money";
+ if(/email|reply|mail|professor/.test(t))return"email";
+ if(/plan|day|study|schedule|calendar/.test(t))return"day";return null}
+function add(c,h){const d=document.createElement("div");d.className=c;d.innerHTML=h;out.appendChild(d);return d}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+async function run(key){
+ if(busy)return;const text=$("q").value.trim();if(!text)return;
+ key=key||pick(text);busy=true;$("go").disabled=true;out.innerHTML="";
+ add("msg u",esc(text));await sleep(400);
+ if(!key){add("msg a","I can help with planning your day, booking dinner, reviewing spending, or drafting an email. Try one of the suggestions above.");busy=false;$("go").disabled=false;return}
+ const s=S[key];
+ for(const [srv,tool,args,res] of s.steps){
+  add("call","<b>"+srv+"</b>."+tool+"("+esc(JSON.stringify(args))+")<span class='r'>→ "+esc(res)+"</span>");await sleep(800)}
+ add("msg a",esc(s.ans));busy=false;$("go").disabled=false}
+$("go").onclick=()=>run();
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter")run()});
+</script>
+</body>
+</html>
