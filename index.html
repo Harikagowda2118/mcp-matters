@@ -1,62 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MCP Matters — AI agents for everyday life</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP Matters — AI agents for everyday life</title>
+<meta name="description" content="Ask an AI assistant about any everyday problem and see how MCP tools could help. Learn what the Model Context Protocol is.">
+<style>
+:root{--bg:#faf8f4;--fg:#1c1b1a;--mut:#6b6860;--card:#fff;--bd:#e6e1d8;--ac:#d9531e;--ac2:#fbe9e0;--code:#f1ede5;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161513;--fg:#f1ede5;--mut:#a39e92;--card:#201e1b;--bd:#35322c;--ac:#ff8a5c;--ac2:#33211a;--code:#262420;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161513;--fg:#f1ede5;--mut:#a39e92;--card:#201e1b;--bd:#35322c;--ac:#ff8a5c;--ac2:#33211a;--code:#262420;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 Georgia,'Times New Roman',serif}
+h1,h2,h3,button,input,summary,nav,.sans{font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
+.w{max-width:900px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--bd)}
+nav .w{display:flex;align-items:center;gap:18px;height:56px}
+.brand{font-weight:700;color:var(--fg);text-decoration:none;margin-right:auto}.brand span{color:var(--ac)}
+nav a.l{color:var(--mut);text-decoration:none;font-size:14px}nav a.l:hover{color:var(--ac)}
+@media(max-width:700px){nav a.l{display:none}}
+#t{background:none;border:1px solid var(--bd);color:var(--fg);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px}
+header{padding:64px 0 24px}
+.tag{display:inline-block;font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);background:var(--ac2);padding:4px 10px;border-radius:99px}
+h1{font-size:clamp(36px,7vw,58px);line-height:1.08;margin:16px 0;letter-spacing:-.02em}h1 em{color:var(--ac);font-style:normal}
+.lead{font-size:20px;color:var(--mut);max-width:640px}
+section{padding:20px 0}
+h2{font-size:28px;margin:40px 0 8px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 20px;max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
+.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--mut);font-size:15px}
+.ico{font-size:26px;display:block;margin-bottom:6px}
+.flow{display:flex;flex-wrap:wrap;gap:10px}
+.flow .b{flex:1 1 170px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;font:14px/1.5 system-ui,sans-serif}
+.flow .b b{display:block;color:var(--ac);margin-bottom:4px}
+.demo{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px}
+.mode{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font:13px system-ui,sans-serif;color:var(--mut)}
+.badge{padding:3px 10px;border-radius:99px;background:var(--ac2);color:var(--ac);font-weight:600}
+.badge.on{background:#dff3e4;color:#17692d}
+.mode a{color:var(--ac);cursor:pointer;text-decoration:underline}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1px solid var(--bd);background:var(--bg);color:var(--fg);padding:8px 12px;border-radius:99px;font-size:14px;cursor:pointer;text-align:left}
+.chip:hover{border-color:var(--ac)}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;padding:12px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--fg);font-size:15px}
+.go{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:0 18px;font-weight:600;cursor:pointer;font-size:15px}
+.go:disabled{opacity:.5;cursor:not-allowed}
+#out{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 14px;border-radius:12px;font-size:15.5px;max-width:94%;white-space:pre-wrap;overflow-wrap:anywhere}
+.u{align-self:flex-end;background:var(--ac2)}.a{background:var(--bg);border:1px solid var(--bd)}
+.lab{font:12px system-ui,sans-serif;color:var(--mut);margin-top:4px}
+.call{border:1px solid var(--bd);border-left:3px solid var(--ac);background:var(--code);border-radius:10px;padding:10px 12px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow-x:auto;animation:in .3s}
+.call b{color:var(--ac)}.call .r{color:var(--mut);display:block;margin-top:2px}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.small{font:13px system-ui,sans-serif;color:var(--mut);margin:10px 0 0}
+#kb{display:none;margin-top:12px;padding:12px;border:1px dashed var(--bd);border-radius:12px;font:13px/1.5 system-ui,sans-serif;color:var(--mut)}
+#kb .row{margin-top:8px}
+pre{background:var(--code);border:1px solid var(--bd);border-radius:12px;padding:14px;overflow-x:auto;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace}
+details.f{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600;font-size:16px}
+details.f p{margin:8px 0 0;color:var(--mut);font-size:16px}
+footer{margin-top:48px;border-top:1px solid var(--bd);padding:32px 0 56px;color:var(--mut);font:14px system-ui,sans-serif}
+footer a{color:var(--ac)}
+</style>
 </head>
 <body>
-<div class="w">
-  <header>
-    <span class="tag">Model Context Protocol</span>
-    <h1>Make <em>MCP</em> matter:<br>AI agents for everyday life</h1>
-    <p class="lead">MCP is a simple open standard that lets an AI assistant safely use your calendar, email, maps, notes and bank — so it can do things for you instead of only talking about them.</p>
-  </header>
+<nav><div class="w">
+  <a class="brand" href="#top">MCP <span>Matters</span></a>
+  <a class="l" href="#demo">Ask AI</a><a class="l" href="#what">What is MCP</a><a class="l" href="#how">How it works</a><a class="l" href="#uses">Use cases</a><a class="l" href="#build">Build</a><a class="l" href="#faq">FAQ</a>
+  <button id="t" aria-label="Toggle theme">◐</button>
+</div></nav>
 
-  <section>
-    <h2>How it works</h2>
-    <div class="grid">
-      <div class="card"><h3>1 · Ask</h3><p>You tell the assistant what you want in plain language.</p></div>
-      <div class="card"><h3>2 · Connect</h3><p>It finds the right MCP servers — small connectors for each app or service.</p></div>
-      <div class="card"><h3>3 · Act</h3><p>It calls their tools step by step, and shows you what it did.</p></div>
-      <div class="card"><h3>4 · Stay in control</h3><p>You approve sensitive actions. Every call is visible.</p></div>
+<div class="w" id="top">
+<header>
+  <span class="tag">Model Context Protocol</span>
+  <h1>Make <em>MCP</em> matter:<br>AI agents for everyday life</h1>
+  <p class="lead">Ask about any daily problem: studies, money, cooking, travel, writing, tech trouble. Get a real answer, plus the MCP tools an AI agent could use to do the work for you.</p>
+</header>
+
+<section id="demo">
+  <h2>Ask anything</h2>
+  <p class="sub">Type your own problem or tap an example.</p>
+  <div class="demo">
+    <div class="mode"><span class="badge" id="badge">Checking…</span><span id="modeTxt"></span><a id="keyLink" style="display:none">Add API key</a></div>
+    <div class="chips" id="chips"></div>
+    <div class="row"><input id="q" placeholder="e.g. I have 3 exams and 5 days. Help!" aria-label="Ask the agent"><button class="go" id="go">Ask</button></div>
+    <div id="out" aria-live="polite"></div>
+    <div id="kb">
+      <b>Use your own Anthropic API key</b> to get live AI answers on this site. It is saved only in this browser and sent only to Anthropic. Get one at console.anthropic.com.
+      <div class="row"><input id="ki" type="password" placeholder="sk-ant-..." autocomplete="off"><button class="go" id="ks" style="padding:10px 16px">Save</button><button class="chip" id="kc">Clear</button></div>
     </div>
-  </section>
+    <p class="small">Tools shown are illustrative: this site does not access your real apps or data. <a href="#" id="nc" style="color:var(--ac)">New chat</a></p>
+  </div>
+</section>
 
-  <section>
-    <h2>Try the agent</h2>
-    <div class="demo">
-      <div class="chips" id="chips"></div>
-      <div class="row">
-        <input id="q" placeholder="Ask for something everyday…" aria-label="Ask the agent">
-        <button class="go" id="go">Run</button>
-      </div>
-      <div id="out" aria-live="polite"></div>
-      <p class="small">Prototype: tool calls are simulated in your browser. Nothing is sent anywhere.</p>
-    </div>
-  </section>
+<section id="what">
+  <h2>What is MCP?</h2>
+  <p class="sub">The Model Context Protocol is an open standard for connecting AI assistants to apps, files and services. Think of it as <b>USB-C for AI</b>: one plug that works everywhere.</p>
+  <div class="grid">
+    <div class="card"><span class="ico">🔌</span><h3>One standard</h3><p>Build a connector once and any MCP-compatible assistant can use it.</p></div>
+    <div class="card"><span class="ico">🧰</span><h3>Tools, not guesses</h3><p>The AI calls real tools with clear inputs and gets real results back.</p></div>
+    <div class="card"><span class="ico">🔒</span><h3>You stay in charge</h3><p>Connectors do only what you allow, and sensitive actions need approval.</p></div>
+  </div>
+</section>
 
-  <section>
-    <h2>What a tool looks like</h2>
-    <p class="muted">An MCP server just describes its tools. Any compatible assistant can use them.</p>
-<pre>{
-  "name": "calendar.find_free_slot",
-  "description": "Find a free time on the user's calendar",
-  "inputSchema": {
-    "type": "object",
-    "properties": {
-      "duration_min": { "type": "number" },
-      "day": { "type": "string" }
-    }
-  }
-}</pre>
-  </section>
+<section id="how">
+  <h2>How it works</h2>
+  <div class="flow">
+    <div class="b"><b>1 · You</b>Ask in plain language.</div>
+    <div class="b"><b>2 · AI assistant</b>The host app. Its MCP client picks tools.</div>
+    <div class="b"><b>3 · MCP servers</b>Small connectors: Calendar, Email, Maps, Notes, Bank.</div>
+    <div class="b"><b>4 · Your apps</b>Real data and actions. Results flow back.</div>
+  </div>
+</section>
 
-  <footer>Make MCP Matter · a prototype for everyday AI agents</footer>
+<section id="uses">
+  <h2>Everyday use cases</h2>
+  <div class="grid">
+    <div class="card"><span class="ico">📅</span><h3>Schedule</h3><p>Find free slots, move meetings, block study time.</p></div>
+    <div class="card"><span class="ico">✉️</span><h3>Email</h3><p>Summarise threads and prepare drafts to approve.</p></div>
+    <div class="card"><span class="ico">🍽️</span><h3>Plans</h3><p>Search places, compare options, reserve a table.</p></div>
+    <div class="card"><span class="ico">💸</span><h3>Money</h3><p>Categorise spending and spot forgotten subscriptions.</p></div>
+    <div class="card"><span class="ico">🧳</span><h3>Travel</h3><p>Build an itinerary from your calendar.</p></div>
+    <div class="card"><span class="ico">🛒</span><h3>Shopping</h3><p>Turn a meal plan into a grocery list.</p></div>
+    <div class="card"><span class="ico">📝</span><h3>Notes</h3><p>Capture and search ideas across apps.</p></div>
+    <div class="card"><span class="ico">📚</span><h3>Study</h3><p>Plan revision around deadlines.</p></div>
+  </div>
+</section>
+
+<section id="build">
+  <h2>Build your own MCP server</h2>
+  <p class="sub">A server just exposes tools. This one saves a note, using the official Python SDK.</p>
+<pre>pip install "mcp[cli]"
+
+# notes_server.py
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("notes")
+NOTES = []
+
+@mcp.tool()
+def add_note(title: str, body: str) -&gt; str:
+    """Save a note and return a confirmation."""
+    NOTES.append({"title": title, "body": body})
+    return f"Saved note: {title}"
+
+if __name__ == "__main__":
+    mcp.run()</pre>
+</section>
+
+<section id="faq">
+  <h2>FAQ</h2>
+  <details class="f"><summary>Is MCP only for developers?</summary><p>Building servers takes code, but using them does not. Many assistants let you add connectors with a few clicks.</p></details>
+  <details class="f"><summary>Can the AI act without asking me?</summary><p>That depends on the assistant’s settings. Good setups ask before sensitive actions such as sending messages or spending money.</p></details>
+  <details class="f"><summary>Is the answer on this page real?</summary><p>When live AI is on, yes: it is a real model answering your question. The tool calls are illustrations of what a connected agent could do.</p></details>
+  <details class="f"><summary>Can it replace a doctor, lawyer or advisor?</summary><p>No. For health, legal or money decisions it gives general information only. In an emergency, contact your local emergency number.</p></details>
+</section>
 </div>
 
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+<footer><div class="w">Make MCP Matter · a prototype for everyday AI agents · <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">modelcontextprotocol.io</a></div></footer>
+
+<script>
+(function(){
+var MODEL="claude-sonnet-5-5";
+var SYS=["You are the assistant inside MCP Matters, a website about everyday AI agents.",
+"Help with any daily-life problem: study, money, cooking, travel, writing, health habits, relationships, tech trouble, productivity.",
+"Be practical, warm and concise (under 180 words). Use short steps when useful.",
+"For medical, legal or financial questions give general information and suggest a professional. For emergencies tell the person to contact local emergency services. If the person seems in distress, respond with care and suggest talking to someone they trust.",
+"Also list 1 to 3 MCP tools that an AI agent with access to the person’s apps could call to help. They are illustrative. Never claim you accessed their real data.",
+"Reply with ONLY valid JSON, no markdown: {\"tools\":[{\"server\":\"calendar\",\"tool\":\"find_free_slot\",\"args\":{\"day\":\"Friday\"},\"why\":\"short reason\"}],\"answer\":\"your answer text\"}"].join(" ");
+var EX=["I have 3 exams in 5 days. Make me a study plan","Plan cheap meals for a week for 2 people","Draft a polite leave request to my manager","My phone battery drains fast. What can I do?","How do we split rent fairly with roommates?","Plan a 2-day trip near Bengaluru"];
+var DEMO=[
+{k:/study|exam|plan|schedule/,s:[["calendar","list_events",{day:"today"},"3 events found"],["tasks","list_due",{within:"7d"},"Report draft, DBMS quiz"],["calendar","create_event",{title:"Study block",time:"15:30–17:00"},"Created"]],a:"Demo answer: I would check your calendar and deadlines, then block a focused study slot each day. Turn on live AI to get a full personalised plan."},
+{k:/dinner|book|restaurant|meal|food/,s:[["maps","search_places",{query:"Italian, 4 stars+"},"Trattoria Roma (0.8 km)"],["calendar","find_free_slot",{day:"Friday"},"Free at 19:30"],["booking","reserve_table",{party:2},"Awaiting your approval"]],a:"Demo answer: I would find a nearby place, check a free slot and ask you to approve the booking."},
+{k:/money|spend|budget|rent|bank/,s:[["bank","get_transactions",{range:"30d"},"84 transactions"],["analysis","categorize",{rows:84},"Food 38%, Transport 22%"]],a:"Demo answer: I would read your last 30 days of spending and group it by category."},
+{k:/email|mail|reply|leave|letter/,s:[["email","search",{unread:true},"1 message"],["email","create_draft",{to:"manager"},"Draft saved, not sent"]],a:"Demo answer: I would write a draft and leave it unsent for you to review."}];
+var $=function(i){return document.getElementById(i)},out=$("out"),inp=$("q"),btn=$("go");
+var mode="demo",sampleFn=null,hist=[],busy=false;
+function key(){try{return localStorage.getItem("mcpk")||""}catch(e){return""}}
+function badge(){var b=$("badge"),t=$("modeTxt"),l=$("keyLink"),kb=$("kb");b.className="badge";l.style.display="none";
+ if(mode==="claude"){b.textContent="Live AI on";b.className="badge on";t.textContent="Answers come from Claude."}
+ else if(mode==="key"){b.textContent="Live AI on";b.className="badge on";t.textContent="Using your API key.";l.style.display="inline";l.textContent="Change key"}
+ else{b.textContent="Demo mode";t.textContent="Limited offline answers.";l.style.display="inline";l.textContent="Turn on live AI"}}
+async function init(){
+ try{if(window.claude&&window.claude.use){var s=await Promise.race([window.claude.use("sample"),new Promise(function(r){setTimeout(function(){r(null)},4000)})]);if(s){sampleFn=s;mode="claude"}}}catch(e){}
+ if(mode==="demo"&&key())mode="key";badge()}
+$("keyLink").onclick=function(){var k=$("kb");k.style.display=k.style.display==="block"?"none":"block"};
+$("ks").onclick=function(){var v=$("ki").value.trim();if(!v)return;try{localStorage.setItem("mcpk",v)}catch(e){}$("ki").value="";mode=sampleFn?"claude":"key";$("kb").style.display="none";badge()};
+$("kc").onclick=function(){try{localStorage.removeItem("mcpk")}catch(e){}mode=sampleFn?"claude":"demo";badge()};
+function add(c,t){var d=document.createElement("div");d.className=c;d.textContent=t;out.appendChild(d);return d}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function callEl(x){var d=document.createElement("div");d.className="call";var b=document.createElement("b");b.textContent=String(x.server||"app");d.appendChild(b);
+ var a="";try{a=JSON.stringify(x.args||{})}catch(e){}d.appendChild(document.createTextNode("."+String(x.tool||"tool")+"("+a+")"));
+ if(x.why){var r=document.createElement("span");r.className="r";r.textContent="→ "+String(x.why);d.appendChild(r)}out.appendChild(d)}
+function parse(t){t=String(t||"").replace(/```json|```/g,"").trim();var i=t.indexOf("{"),j=t.lastIndexOf("}");
+ if(i>=0&&j>i){try{var o=JSON.parse(t.slice(i,j+1));if(o&&o.answer)return o}catch(e){}}return{tools:[],answer:t}}
+async function ask(text){
+ if(mode==="claude"){
+  var p=SYS+"\n\nConversation so far:\n"+hist.slice(-8).map(function(h){return(h.r==="u"?"User: ":"Assistant: ")+h.t}).join("\n")+"\n\nUser: "+text;
+  var r=await sampleFn(p,{cache:false});return parse(r.text)}
+ var msgs=hist.slice(-8).map(function(h){return{role:h.r==="u"?"user":"assistant",content:h.t}});msgs.push({role:"user",content:text});
+ var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:MODEL,max_tokens:1200,system:SYS,messages:msgs})});
+ var j=await res.json();if(!res.ok)throw new Error((j.error&&j.error.message)||"Request failed");
+ return parse((j.content||[]).map(function(c){return c.text||""}).join(""))}
+function demo(text){for(var i=0;i<DEMO.length;i++){if(DEMO[i].k.test(text.toLowerCase())){var d=DEMO[i];return{tools:d.s.map(function(x){return{server:x[0],tool:x[1],args:x[2],why:x[3]}}),answer:d.a}}}
+ return{tools:[],answer:"I can only show a few examples in demo mode (study, meals, money, email). Tap “Turn on live AI” above to ask anything."}}
+async function run(text){
+ text=(text||inp.value).trim();if(busy||!text)return;busy=true;btn.disabled=true;inp.value="";
+ add("msg u",text);var th=add("msg a","Thinking…");var o;
+ try{o=mode==="demo"?(await sleep(500),demo(text)):await ask(text)}
+ catch(e){th.remove();var m=e&&e.code==="not_granted"?"Permission was declined, so live AI is off.":e&&e.code==="rate_limited"?"Too many requests. Please wait a moment.":"Could not get an answer: "+(e&&e.message?e.message:"unknown error");add("msg a",m);busy=false;btn.disabled=false;return}
+ th.remove();
+ if(o.tools&&o.tools.length){var l=add("lab","Suggested MCP tools (illustrative)");for(var i=0;i<Math.min(o.tools.length,3);i++){callEl(o.tools[i]);await sleep(500)}}
+ add("msg a",String(o.answer));hist.push({r:"u",t:text},{r:"a",t:String(o.answer)});busy=false;btn.disabled=false}
+EX.forEach(function(t){var b=document.createElement("button");b.className="chip";b.textContent=t;b.onclick=function(){run(t)};$("chips").appendChild(b)});
+btn.onclick=function(){run()};inp.addEventListener("keydown",function(e){if(e.key==="Enter")run()});
+$("nc").onclick=function(e){e.preventDefault();hist=[];out.innerHTML=""};
+$("t").onclick=function(){var d=document.documentElement,dk=d.dataset.theme?d.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;d.dataset.theme=dk?"light":"dark"};
+init();
+})();
+</script>
 </body>
 </html>
